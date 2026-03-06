@@ -12,13 +12,13 @@
   --matrix-green:#00FF41;
   --matrix-green-dark:#003B00;
   --matrix-green-glow:rgba(0,255,65,.6);
-  --blue-pill:#4A90D9;
-  --blue-pill-light:#6AB0E9;
-  --blue-pill-dark:#2A5A89;
-  --blue-glow:rgba(74,144,217,.6);
+  --blue-pill:#2E5EAA;
+  --blue-pill-light:#4A90D9;
+  --blue-pill-dark:#1A3D7C;
+  --blue-glow:rgba(74,144,217,.8);
   --red-pill:#CE1126;
-  --red-pill-light:#E84444;
-  --red-pill-dark:#8A0A18;
+  --red-pill-light:#FF1A1A;
+  --red-pill-dark:#990000;
   --red-glow:rgba(206,17,38,.6);
   --black:#000;
 }
@@ -54,8 +54,8 @@ body{font-family:'Courier New',Courier,monospace;background:var(--black);color:v
 .pill-blue:hover{opacity:1;transform:scale(1.05);box-shadow:0 0 60px var(--blue-glow)}
 .pill-red{background:radial-gradient(circle at 30% 30%,var(--red-pill-light),var(--red-pill) 50%,var(--red-pill-dark));border:3px solid var(--red-pill);box-shadow:0 0 40px var(--red-glow),inset 0 0 60px rgba(255,255,255,.2)}
 .pill-red:hover{transform:scale(1.05);box-shadow:0 0 60px var(--red-glow),inset 0 0 80px rgba(255,255,255,.3)}
-.pill-label{font-weight:700;margin-bottom:8px;color:var(--black);text-shadow:none}
-.pill-sub{color:rgba(0,0,0,.7);text-shadow:none}
+.pill-label{font-weight:700;margin-bottom:12px;color:#FFF;text-shadow:0 2px 4px rgba(0,0,0,.8);font-size:24px;letter-spacing:2px}
+.pill-sub{color:rgba(255,255,255,.9);text-shadow:0 1px 3px rgba(0,0,0,.7);font-size:18px}
 .pill-current::after{content:'>>> YOU ARE HERE';position:absolute;bottom:-30px;left:50%;transform:translateX(-50%);color:var(--matrix-green);text-shadow:0 0 8px var(--matrix-green);animation:blink 1.5s infinite}
 
 /* Warning box - RED accent only */
@@ -162,36 +162,30 @@ a:hover{color:var(--matrix-green);text-shadow:0 0 8px var(--matrix-green-glow)}
     <div class="step">
       <div class="step-num text-base">1</div>
       <div class="step-content">
-        <div class="step-title text-md">Clone both repositories</div>
-        <div class="step-text text-sm"><code>git clone https://github.com/marcusash/gh-copilot-setup.git C:\GHCopilotSetup</code></div>
+        <div class="step-title text-md">Open PowerShell as Admin and paste this</div>
+        <div class="step-text text-sm"><code>Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force; irm https://raw.githubusercontent.com/marcusash/gh-copilot-setup/main/install.ps1 -OutFile $env:TEMP\ghsetup.ps1; powershell -ExecutionPolicy Bypass -File $env:TEMP\ghsetup.ps1</code></div>
+        <div class="step-text text-sm" style="opacity:.6;margin-top:8px">No Git required. The script installs everything: Git, VS Code, PowerShell 7, both agents.</div>
       </div>
     </div>
     <div class="step">
       <div class="step-num text-base">2</div>
       <div class="step-content">
-        <div class="step-title text-md">Install dependencies</div>
-        <div class="step-text text-sm">Open PowerShell as Admin. Run installation scripts for both workspaces. One at a time.</div>
+        <div class="step-title text-md">Initialize AI Maker</div>
+        <div class="step-text text-sm">Open VS Code. Open GitHub Copilot chat. Say: "Good morning." AI Maker runs the onboarding interview. Answer one question at a time.</div>
       </div>
     </div>
     <div class="step">
       <div class="step-num text-base">3</div>
       <div class="step-content">
-        <div class="step-title text-md">Initialize AI Maker first</div>
-        <div class="step-text text-sm">Open VS Code in <code>C:\AIMaker</code>. Open GitHub Copilot chat. Say: "Good morning." AI Maker runs the onboarding interview. Answer one question at a time. Profile saves to <code>C:\AIMaker\profile.md</code>.</div>
+        <div class="step-title text-md">Initialize AI Workbench</div>
+        <div class="step-text text-sm">Open a second VS Code window. Open Copilot chat. Say: "AI Workbench ready. What are we working on?" No onboarding. It learns through the work.</div>
       </div>
     </div>
     <div class="step">
       <div class="step-num text-base">4</div>
       <div class="step-content">
-        <div class="step-title text-md">Initialize AI Workbench</div>
-        <div class="step-text text-sm">Open VS Code in <code>C:\AIWorkbench</code>. Open GitHub Copilot chat. Say: "AI Workbench ready. What are we working on?" No onboarding interview. It learns through the work.</div>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num text-base">5</div>
-      <div class="step-content">
         <div class="step-title text-md">Choose your agent based on the work</div>
-        <div class="step-text text-sm">Open AI Maker for day-to-day work. Open AI Workbench for technical investigation, research, debugging, or building. Each agent has its own workspace. Each specializes.</div>
+        <div class="step-text text-sm">AI Maker for day-to-day work. AI Workbench for technical investigation, research, debugging. Each specializes.</div>
       </div>
     </div>
   </div>
