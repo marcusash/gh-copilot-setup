@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Copilot User Guide</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--matrix-green:#00FF41;--matrix-green-dark:#003B00;--matrix-green-glow:rgba(0,255,65,.6);--red-pill:#CC0000;--red-pill-glow:rgba(204,0,0,.6);--black:#000;--cyan:#00D9FF}
+body{font-family:'Courier New',Courier,monospace;background:var(--black);color:var(--matrix-green);overflow-x:hidden;min-height:100vh;font-size:16px;line-height:1.6}
+.text-xl{font-size:32px;line-height:1.2}.text-lg{font-size:24px;line-height:1.3}.text-md{font-size:18px;line-height:1.4}.text-base{font-size:16px;line-height:1.6}.text-sm{font-size:14px;line-height:1.6}
+#matrix{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;opacity:.08}
+.content{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:40px 20px}
+.header{text-align:center;margin-bottom:60px;padding-top:40px}.header-title{text-transform:uppercase;letter-spacing:4px;text-shadow:0 0 20px var(--matrix-green);margin-bottom:16px}.header-subtitle{opacity:.7;margin-bottom:30px}
+.terminal{background:rgba(0,20,0,.85);border:2px solid var(--matrix-green);border-radius:0;box-shadow:0 0 30px rgba(0,255,65,.3);margin-bottom:40px;overflow:hidden}
+.terminal-header{background:var(--matrix-green-dark);border-bottom:1px solid var(--matrix-green);padding:8px 12px;display:flex;align-items:center;gap:8px}
+.terminal-dot{width:12px;height:12px;border-radius:50%;border:1px solid var(--matrix-green)}
+.terminal-body{padding:30px}
+.section{margin-bottom:50px}.section-title{margin-bottom:20px;color:var(--matrix-green);text-transform:uppercase;letter-spacing:2px;border-left:4px solid var(--matrix-green);padding-left:12px;text-shadow:0 0 8px var(--matrix-green)}.section-text{margin-bottom:16px;opacity:.9}
+.warning{background:rgba(26,0,0,.8);border:2px solid var(--red-pill);padding:24px;margin:30px 0;position:relative;box-shadow:0 0 30px var(--red-pill-glow)}
+.warning::before{content:'!';position:absolute;top:-16px;left:20px;background:var(--red-pill);color:var(--black);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700}
+.warning-title{margin-bottom:12px;color:var(--red-pill);text-shadow:0 0 8px var(--red-pill);font-weight:700}
+.info-box{background:rgba(0,59,0,.2);border:1px solid var(--matrix-green);padding:20px;margin-bottom:20px;border-radius:4px}
+.info-title{margin-bottom:12px;color:var(--matrix-green);text-shadow:0 0 6px var(--matrix-green);font-weight:700}
+.highlight-box{background:rgba(0,59,0,.4);border:2px solid var(--matrix-green);padding:24px;margin:30px 0;box-shadow:0 0 20px rgba(0,255,65,.2)}
+.tutorial-badge{display:inline-block;background:rgba(0,255,65,.2);border:1px solid var(--matrix-green);padding:4px 12px;border-radius:12px;font-size:12px;letter-spacing:1px;margin-bottom:16px}
+.step{background:rgba(0,59,0,.15);border-left:3px solid var(--matrix-green);padding:20px;margin-bottom:16px;position:relative;padding-left:60px}
+.step-num{position:absolute;left:15px;top:20px;width:30px;height:30px;border-radius:50%;background:var(--matrix-green);color:var(--black);display:flex;align-items:center;justify-content:center;font-weight:700;box-shadow:0 0 10px var(--matrix-green)}
+.step-title{margin-bottom:8px;color:var(--matrix-green);font-weight:700}
+code{background:rgba(0,255,65,.08);padding:3px 8px;border-radius:3px;color:var(--matrix-green);border:1px solid rgba(0,255,65,.2);font-family:'Courier New',monospace}
+.prompt-box{background:rgba(0,20,0,.9);border:2px solid var(--matrix-green);padding:20px;margin:16px 0;border-radius:4px;font-style:italic;color:var(--cyan);box-shadow:0 0 15px rgba(0,255,65,.2)}
+a{color:var(--cyan);text-decoration:underline;text-shadow:0 0 6px rgba(0,217,255,.6);font-weight:600}
+a:hover{color:#4DFFFF;text-shadow:0 0 10px rgba(77,255,255,.8)}
+ul{margin-left:20px;margin-bottom:16px}li{margin-bottom:8px;opacity:.9}li::marker{color:var(--matrix-green)}
+.footer{text-align:center;margin-top:80px;padding:40px 20px;border-top:1px solid rgba(0,255,65,.2);opacity:.6}
+</style>
+</head>
+<body>
+<canvas id="matrix"></canvas>
+<div class="content">
+<div class="header">
+<div class="header-title text-xl">&gt; GITHUB COPILOT USER GUIDE</div>
+<div class="header-subtitle text-base">Two agents. Four tutorials. Your training path to mastery.</div>
+</div>
+
+<div class="warning">
+<div class="warning-title text-md">YOU TOOK THE RED PILL</div>
+<div class="text-sm" style="color:var(--matrix-green)">This is the full setup. Two agents, four tutorials, deeper capability. More work. Worth it.</div>
+</div>
+
+<div class="section">
+<div class="section-title text-lg">&gt; YOUR TWO AGENTS</div>
+<div class="terminal"><div class="terminal-body">
+<div class="section-text text-base"><strong>AI Maker (Yellow tab):</strong> Your day-to-day partner. Emails, documents, brainstorming, presentations, meeting prep. Use AI Maker for work you already do.</div>
+<div class="section-text text-base"><strong>AI Workbench (Red tab):</strong> Your technical partner. GitHub management, PowerShell scripts, data analysis, research with citations, debugging. Use AI Workbench for technical depth.</div>
+<div class="highlight-box text-sm"><strong>When in doubt, start with AI Maker.</strong> It will hand off to AI Workbench if the task needs technical depth.</div>
+</div></div>
+</div>
+
+<div class="section">
+<div class="section-title text-lg">&gt; TUTORIAL 1: MY GITHUB HOME</div>
+<div class="tutorial-badge">TUTORIAL 1 OF 4 • USE AI WORKBENCH</div>
+<div class="info-box">
+<div class="info-title text-md">What you will build</div>
+<div class="text-sm">A GitHub profile README that introduces who you are. Learn how repos, commits, branches, and issues work.</div>
+</div>
+<div class="step"><div class="step-num">1</div><div>
+<div class="step-title text-md">Create your profile repo</div>
+<div class="text-sm">Tell AI Workbench:<div class="prompt-box">"Create a GitHub repo with my username as the repo name. Make it public. This is my profile repo."</div>AI Workbench will run <code>gh repo create</code> for you.</div>
+</div></div>
+<div class="step"><div class="step-num">2</div><div>
+<div class="step-title text-md">Draft your README</div>
+<div class="text-sm">Tell AI Workbench:<div class="prompt-box">"Write a GitHub profile README for me. I'm [your name], [your role]. I work on [what you work on]. Keep it to 3-4 sentences."</div></div>
+</div></div>
+<div class="step"><div class="step-num">3</div><div>
+<div class="step-title text-md">Commit and push it</div>
+<div class="text-sm">Tell AI Workbench:<div class="prompt-box">"Save this as README.md in the profile repo, commit it, and push to GitHub."</div>AI Workbench will run the git commands for you.</div>
+</div></div>
+<div class="highlight-box text-sm"><strong>What you learned:</strong> How to use AI Workbench to run GitHub commands without memorizing them. How repos and commits work.</div>
+</div>
+
+<div class="section">
+<div class="section-title text-lg">&gt; TUTORIAL 2: MEETING INTELLIGENCE</div>
+<div class="tutorial-badge">TUTORIAL 2 OF 4 • USE AI WORKBENCH + WORKIQ</div>
+<div class="info-box">
+<div class="info-title text-md">What you will build</div>
+<div class="text-sm">A weekly meeting intelligence report. Learn how WorkIQ connects to your M365 data and how to analyze meetings.</div>
+</div>
+<div class="step"><div class="step-num">1</div><div>
+<div class="step-title text-md">Connect WorkIQ (one-time setup)</div>
+<div class="text-sm">Tell AI Workbench:<div class="prompt-box">"Authenticate WorkIQ for me."</div>A browser window will open. Sign in with your Microsoft account. Close the browser when done.</div>
+</div></div>
+<div class="step"><div class="step-num">2</div><div>
+<div class="step-title text-md">Pull your meeting data</div>
+<div class="text-sm">Tell AI Workbench:<div class="prompt-box">"Get all my meetings from the last 7 days. Pull the title, attendees, and duration for each one."</div>AI Workbench will query WorkIQ and return the data.</div>
+</div></div>
+<div class="step"><div class="step-num">3</div><div>
+<div class="step-title text-md">Analyze and summarize</div>
+<div class="text-sm">Tell AI Workbench:<div class="prompt-box">"Summarize this week's meetings. Group by project. Flag any meetings where I was the only attendee from my team."</div></div>
+</div></div>
+<div class="highlight-box text-sm"><strong>What you learned:</strong> How WorkIQ connects your agents to M365 data. How to query and analyze your calendar without leaving the CLI.</div>
+</div>
+
+<div class="section">
+<div class="section-title text-lg">&gt; TUTORIAL 3: TEAM ONBOARDING KIT</div>
+<div class="tutorial-badge">TUTORIAL 3 OF 4 • USE AI MAKER</div>
+<div class="info-box">
+<div class="info-title text-md">What you will build</div>
+<div class="text-sm">An onboarding guide for new teammates. Learn how AI Maker handles structured documents and brainstorming.</div>
+</div>
+<div class="step"><div class="step-num">1</div><div>
+<div class="step-title text-md">Brainstorm the content</div>
+<div class="text-sm">Tell AI Maker:<div class="prompt-box">"I need to create an onboarding guide for new engineers on my team. What should be in it? Ask me clarifying questions first."</div>AI Maker will interview you before generating content.</div>
+</div></div>
+<div class="step"><div class="step-num">2</div><div>
+<div class="step-title text-md">Generate the guide</div>
+<div class="text-sm">Tell AI Maker:<div class="prompt-box">"Based on what I just told you, write the onboarding guide. Use markdown. Keep it to one page."</div></div>
+</div></div>
+<div class="step"><div class="step-num">3</div><div>
+<div class="step-title text-md">Refine it</div>
+<div class="text-sm">If the tone is off, tell AI Maker:<div class="prompt-box">"This is too formal. Rewrite it like I'm talking to a peer on their first day."</div>AI Maker will remember this preference for future documents.</div>
+</div></div>
+<div class="highlight-box text-sm"><strong>What you learned:</strong> How AI Maker asks clarifying questions before generating content. How to refine tone and structure through iteration.</div>
+</div>
+
+<div class="section">
+<div class="section-title text-lg">&gt; TUTORIAL 4: YOUR VOICE SKILL</div>
+<div class="tutorial-badge">TUTORIAL 4 OF 4 • USE AI WORKBENCH</div>
+<div class="info-box">
+<div class="info-title text-md">What you will build</div>
+<div class="text-sm">A custom skill that teaches your agents how you communicate. Learn how to extend your agents with your own instructions.</div>
+</div>
+<div class="step"><div class="step-num">1</div><div>
+<div class="step-title text-md">Create the skill file</div>
+<div class="text-sm">Tell AI Workbench:<div class="prompt-box">"Create a new skill file called 'my-voice.md' in my pc-setup repo. This skill will teach you how I write emails and documents."</div></div>
+</div></div>
+<div class="step"><div class="step-num">2</div><div>
+<div class="step-title text-md">Write the skill instructions</div>
+<div class="text-sm">Tell AI Workbench:<div class="prompt-box">"Add these rules to the skill: I prefer bullet points over paragraphs. I use short sentences. I avoid corporate jargon. I sign emails with just my first name."</div></div>
+</div></div>
+<div class="step"><div class="step-num">3</div><div>
+<div class="step-title text-md">Test the skill</div>
+<div class="text-sm">Switch to AI Maker. Tell it:<div class="prompt-box">"Draft an email to my team about the Q3 roadmap delay. Use my voice skill."</div>AI Maker will apply the rules you just defined.</div>
+</div></div>
+<div class="highlight-box text-sm"><strong>What you learned:</strong> How to create custom skills. How skills extend what your agents know. How to maintain your own agent instructions in GitHub.</div>
+</div>
+
+<div class="section">
+<div class="section-title text-lg">&gt; WHAT HAPPENS NEXT</div>
+<div class="terminal"><div class="terminal-body">
+<div class="section-text text-base">You have completed the four tutorials. You now understand how both agents work, how WorkIQ connects to M365, and how to create custom skills.</div>
+<div class="section-text text-base">Your pc-setup repo is on GitHub at <code>github.com/YOUR_USERNAME/pc-setup</code>. Add more skills. Update agent instructions. Push your changes. This is your environment now.</div>
+<div class="text-md" style="margin-top:20px;color:var(--red-pill);text-shadow:0 0 8px var(--red-pill)">Welcome to the real world.</div>
+</div></div>
+</div>
+
+<div class="footer text-sm">
+<div style="margin-bottom:12px"><a href="matrix-gh-copilot-setup.html">Back to Red Pill home</a></div>
+<div>Created by Marcus Ash. <a href="https://github.com/marcusash">github.com/marcusash</a>. 2026.</div>
+</div>
+</div>
+<script>
+const canvas=document.getElementById('matrix');const ctx=canvas.getContext('2d');canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+const chars='アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズヅブプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴ01';
+const fontSize=14;const cols=canvas.width/fontSize;const drops=[];for(let i=0;i<cols;i++)drops[i]=1;
+function draw(){ctx.fillStyle='rgba(0,0,0,.05)';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#00FF41';ctx.font=fontSize+'px monospace';
+for(let i=0;i<drops.length;i++){const text=chars[Math.floor(Math.random()*chars.length)];ctx.fillText(text,i*fontSize,drops[i]*fontSize);
+if(drops[i]*fontSize>canvas.height&&Math.random()>.975)drops[i]=0;drops[i]++}}setInterval(draw,33);
+window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight});
+</script>
+</body>
+</html>
