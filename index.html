@@ -129,6 +129,20 @@ a:hover{color:var(--matrix-green);text-shadow:0 0 8px var(--matrix-green-glow)}
   </div>
 
   <div class="section">
+    <div class="section-title text-lg">&gt; BEFORE YOU START</div>
+    <div class="terminal">
+      <div class="terminal-body">
+        <div class="text-base" style="margin-bottom:16px">
+          <strong>Read the full setup guide first:</strong> <a href="https://github.com/marcusash/gh-copilot-setup/blob/main/README.md" target="_blank">GitHub Copilot Setup Guide</a>
+        </div>
+        <div class="text-sm" style="opacity:.8">
+          Installation has interactive steps (GitHub sign-in, device connection, workspace setup). The guide covers everything.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
     <div class="section-title text-lg">&gt; WHAT YOU GET</div>
     <div class="terminal">
       <div class="terminal-body">
@@ -147,48 +161,95 @@ a:hover{color:var(--matrix-green);text-shadow:0 0 8px var(--matrix-green-glow)}
 
   <div class="section">
     <div class="section-title text-lg">&gt; PREREQUISITES</div>
-    <div class="prereq">
-      <div class="prereq-title text-md">GitHub Copilot Pro</div>
-      <div class="prereq-text text-sm">$10/month minimum. Required for custom agent instructions. <a href="https://github.com/features/copilot/plans">Subscribe here</a>.</div>
+    
+    <div class="prereq" style="background:rgba(26,0,0,.9);border:2px solid var(--red-pill)">
+      <div class="prereq-title text-md" style="color:var(--red-pill)">Microsoft Employees</div>
+      <div class="prereq-text text-sm" style="margin-bottom:12px">
+        <strong>1. Personal GitHub account:</strong> If you don't have one, create at <a href="https://github.com/signup" target="_blank">github.com/signup</a>
+      </div>
+      <div class="prereq-text text-sm">
+        <strong>2. Enterprise account:</strong> Use format <code>yourAlias_microsoft</code> (e.g., <code>marcusash_microsoft</code>). GitHub Copilot is included.
+      </div>
     </div>
+
+    <div class="prereq">
+      <div class="prereq-title text-md">External Users</div>
+      <div class="prereq-text text-sm">GitHub Copilot Pro required ($10/month). <a href="https://github.com/features/copilot/plans" target="_blank">Subscribe here</a>.</div>
+    </div>
+
     <div class="prereq">
       <div class="prereq-title text-md">Microsoft 365 Copilot (Optional)</div>
-      <div class="prereq-text text-sm">Required if you want AI Workbench to integrate with M365 data. Not required for GitHub Copilot functionality.</div>
+      <div class="prereq-text text-sm">Required only if you want AI Workbench to integrate with M365 data. Not required for GitHub Copilot functionality.</div>
     </div>
   </div>
 
   <div class="section">
-    <div class="section-title text-lg">&gt; INSTALLATION SEQUENCE</div>
+    <div class="section-title text-lg">&gt; INSTALLATION</div>
+    
     <div class="step">
       <div class="step-num text-base">1</div>
       <div class="step-content">
-        <div class="step-title text-md">Open PowerShell as Admin and paste this</div>
-        <div class="step-text text-sm"><code>Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force; irm https://raw.githubusercontent.com/marcusash/gh-copilot-setup/main/install.ps1 -OutFile $env:TEMP\ghsetup.ps1; powershell -ExecutionPolicy Bypass -File $env:TEMP\ghsetup.ps1</code></div>
-        <div class="step-text text-sm" style="opacity:.6;margin-top:8px">No Git required. The script installs everything: Git, VS Code, PowerShell 7, both agents.</div>
+        <div class="step-title text-md">Open Windows Terminal as Admin</div>
+        <div class="step-text text-sm" style="margin-bottom:8px">Press <code>Win+X</code>, select "Terminal (Admin)"</div>
+        <div class="step-text text-sm" style="opacity:.7">Or search "Terminal" in Start menu, right-click, "Run as administrator"</div>
       </div>
     </div>
+
     <div class="step">
       <div class="step-num text-base">2</div>
       <div class="step-content">
-        <div class="step-title text-md">Initialize AI Maker</div>
-        <div class="step-text text-sm">Open VS Code. Open GitHub Copilot chat. Say: "Good morning." AI Maker runs the onboarding interview. Answer one question at a time.</div>
+        <div class="step-title text-md">Paste this command and press Enter</div>
+        <div style="position:relative;margin-top:12px">
+          <code id="installCmd" style="display:block;padding:12px;background:rgba(0,255,65,.1);border:1px solid var(--matrix-green);border-radius:4px;font-size:13px;line-height:1.6;overflow-x:auto">irm https://github.com/marcusash/gh-copilot-setup/raw/main/install.ps1 | iex</code>
+          <button onclick="copyInstall()" style="position:absolute;top:8px;right:8px;background:var(--matrix-green);color:var(--black);border:none;padding:6px 12px;border-radius:3px;cursor:pointer;font-family:'Courier New',monospace;font-size:12px;font-weight:700">COPY</button>
+        </div>
+        <div class="step-text text-sm" style="opacity:.7;margin-top:12px">Script installs Git, VS Code, PowerShell 7, and sets up both agent workspaces.</div>
       </div>
     </div>
+
     <div class="step">
       <div class="step-num text-base">3</div>
       <div class="step-content">
-        <div class="step-title text-md">Initialize AI Workbench</div>
-        <div class="step-text text-sm">Open a second VS Code window. Open Copilot chat. Say: "AI Workbench ready. What are we working on?" No onboarding. It learns through the work.</div>
+        <div class="step-title text-md">Launch agents from desktop shortcuts</div>
+        <div class="step-text text-sm">After install completes, you'll have two shortcuts on your desktop: <strong>AI Maker</strong> and <strong>AI Workbench</strong> (both with GitHub logo). Click to launch each workspace in VS Code.</div>
       </div>
     </div>
+
     <div class="step">
       <div class="step-num text-base">4</div>
       <div class="step-content">
+        <div class="step-title text-md">Initialize AI Maker first</div>
+        <div class="step-text text-sm">Open AI Maker. In GitHub Copilot chat, say: <code>Good morning.</code> AI Maker runs the onboarding interview. Answer one question at a time.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num text-base">5</div>
+      <div class="step-content">
+        <div class="step-title text-md">Initialize AI Workbench</div>
+        <div class="step-text text-sm">Open AI Workbench. In Copilot chat, say: <code>AI Workbench ready. What are we working on?</code> No onboarding interview. It learns through the work.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num text-base">6</div>
+      <div class="step-content">
         <div class="step-title text-md">Choose your agent based on the work</div>
-        <div class="step-text text-sm">AI Maker for day-to-day work. AI Workbench for technical investigation, research, debugging. Each specializes.</div>
+        <div class="step-text text-sm">Use AI Maker for day-to-day work. Use AI Workbench for technical investigation, research, debugging, or building. Each has its own workspace. Each specializes.</div>
       </div>
     </div>
   </div>
+
+<script>
+function copyInstall(){
+  const cmd=document.getElementById('installCmd').textContent;
+  navigator.clipboard.writeText(cmd).then(()=>{
+    const btn=event.target;
+    btn.textContent='COPIED!';
+    setTimeout(()=>btn.textContent='COPY',2000);
+  });
+}
+</script>
 
   <div class="section">
     <div class="section-title text-lg">&gt; WHAT HAPPENS NEXT</div>
@@ -209,6 +270,7 @@ a:hover{color:var(--matrix-green);text-shadow:0 0 8px var(--matrix-green-glow)}
 
   <div class="footer text-sm">
     <div style="margin-bottom:12px">Want to start smaller? <a href="https://marcusash.github.io/ai-maker/">The blue pill is there</a>.</div>
+    <div style="margin-bottom:12px">Want to teach your agent something new? <a href="https://marcusash.github.io/gh-copilot-setup/docs/skills/">Browse the Skill Library</a>.</div>
     <div>Created by Marcus Ash. <a href="https://github.com/marcusash">github.com/marcusash</a>. 2026.</div>
   </div>
 
