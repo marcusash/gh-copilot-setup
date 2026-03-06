@@ -6,51 +6,54 @@
 <title>GitHub Copilot User Guide</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--matrix-green:#00FF41;--matrix-green-dark:#003B00;--matrix-green-glow:rgba(0,255,65,.6);--red-pill:#CC0000;--red-pill-glow:rgba(204,0,0,.6);--black:#000;--cyan:#00D9FF}
-body{font-family:'Courier New',Courier,monospace;background:var(--black);color:var(--matrix-green);overflow-x:hidden;min-height:100vh;font-size:16px;line-height:1.6}
-.text-xl{font-size:32px;line-height:1.2}.text-lg{font-size:24px;line-height:1.3}.text-md{font-size:18px;line-height:1.4}.text-base{font-size:16px;line-height:1.6}.text-sm{font-size:14px;line-height:1.6}
-#matrix{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;opacity:.08}
-.content{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:40px 20px}
-.header{text-align:center;margin-bottom:60px;padding-top:40px}.header-title{text-transform:uppercase;letter-spacing:4px;text-shadow:0 0 20px var(--matrix-green);margin-bottom:16px}.header-subtitle{opacity:.7;margin-bottom:30px}
-.terminal{background:rgba(0,20,0,.85);border:2px solid var(--matrix-green);border-radius:0;box-shadow:0 0 30px rgba(0,255,65,.3);margin-bottom:40px;overflow:hidden}
-.terminal-header{background:var(--matrix-green-dark);border-bottom:1px solid var(--matrix-green);padding:8px 12px;display:flex;align-items:center;gap:8px}
-.terminal-dot{width:12px;height:12px;border-radius:50%;border:1px solid var(--matrix-green)}
-.terminal-body{padding:30px}
-.section{margin-bottom:50px}.section-title{margin-bottom:20px;color:var(--matrix-green);text-transform:uppercase;letter-spacing:2px;border-left:4px solid var(--matrix-green);padding-left:12px;text-shadow:0 0 8px var(--matrix-green)}.section-text{margin-bottom:16px;opacity:.9}
-.warning{background:rgba(26,0,0,.8);border:2px solid var(--red-pill);padding:24px;margin:30px 0;position:relative;box-shadow:0 0 30px var(--red-pill-glow)}
-.warning::before{content:'!';position:absolute;top:-16px;left:20px;background:var(--red-pill);color:var(--black);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700}
-.warning-title{margin-bottom:12px;color:var(--red-pill);text-shadow:0 0 8px var(--red-pill);font-weight:700}
-.info-box{background:rgba(0,59,0,.2);border:1px solid var(--matrix-green);padding:20px;margin-bottom:20px;border-radius:4px}
-.info-title{margin-bottom:12px;color:var(--matrix-green);text-shadow:0 0 6px var(--matrix-green);font-weight:700}
-.highlight-box{background:rgba(0,59,0,.4);border:2px solid var(--matrix-green);padding:24px;margin:30px 0;box-shadow:0 0 20px rgba(0,255,65,.2)}
-.tutorial-badge{display:inline-block;background:rgba(0,255,65,.2);border:1px solid var(--matrix-green);padding:4px 12px;border-radius:12px;font-size:12px;letter-spacing:1px;margin-bottom:16px}
-.step{background:rgba(0,59,0,.15);border-left:3px solid var(--matrix-green);padding:20px;margin-bottom:16px;position:relative;padding-left:60px}
-.step-num{position:absolute;left:15px;top:20px;width:30px;height:30px;border-radius:50%;background:var(--matrix-green);color:var(--black);display:flex;align-items:center;justify-content:center;font-weight:700;box-shadow:0 0 10px var(--matrix-green)}
-.step-title{margin-bottom:8px;color:var(--matrix-green);font-weight:700}
-code{background:rgba(0,255,65,.08);padding:3px 8px;border-radius:3px;color:var(--matrix-green);border:1px solid rgba(0,255,65,.2);font-family:'Courier New',monospace}
-.prompt-box{background:rgba(0,20,0,.9);border:2px solid var(--matrix-green);padding:20px;margin:16px 0;border-radius:4px;font-style:italic;color:var(--cyan);box-shadow:0 0 15px rgba(0,255,65,.2)}
-a{color:var(--cyan);text-decoration:underline;text-shadow:0 0 6px rgba(0,217,255,.6);font-weight:600}
-a:hover{color:#4DFFFF;text-shadow:0 0 10px rgba(77,255,255,.8)}
-ul{margin-left:20px;margin-bottom:16px}li{margin-bottom:8px;opacity:.9}li::marker{color:var(--matrix-green)}
-.footer{text-align:center;margin-top:80px;padding:40px 20px;border-top:1px solid rgba(0,255,65,.2);opacity:.6}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;background:#fafafa;color:#1a1a1a;line-height:1.6}
+.text-xl{font-size:36px;line-height:1.2}.text-lg{font-size:28px;line-height:1.3}.text-md{font-size:22px;line-height:1.4}.text-base{font-size:17px;line-height:1.7}.text-sm{font-size:15px;line-height:1.6}
+.content{max-width:900px;margin:0 auto;padding:60px 24px;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.header{border-bottom:3px solid #CE1126;padding-bottom:24px;margin-bottom:40px}
+.welcome{font-size:13px;text-transform:uppercase;letter-spacing:1.5px;color:#CE1126;font-weight:600;margin-bottom:12px}
+.header-title{margin-bottom:12px;color:#000;font-weight:700}
+.header-subtitle{opacity:.7;color:#666}
+.section{margin-bottom:40px}
+.section-title{margin-bottom:20px;color:#1a1a1a;font-weight:600;border-left:4px solid #CE1126;padding-left:16px}
+.section-text{margin-bottom:16px;color:#444}
+.warning{background:#fff5f5;border:2px solid #fecaca;padding:24px;margin:30px 0;border-radius:6px;border-left:4px solid #CE1126}
+.warning-title{margin-bottom:12px;color:#CE1126;font-weight:700}
+.info-box{background:#f8f9fa;border:1px solid #e0e0e0;padding:20px;margin-bottom:20px;border-radius:6px}
+.info-title{margin-bottom:12px;color:#1a1a1a;font-weight:700}
+.highlight-box{background:#fff5f5;border:2px solid #fecaca;padding:24px;margin:30px 0;border-radius:6px}
+.tutorial-badge{display:inline-block;background:#CE1126;color:#fff;padding:4px 12px;border-radius:4px;font-size:12px;font-weight:600;margin-left:8px}
+.step{background:#fff;border:1px solid #e0e0e0;padding:24px;margin-bottom:20px;border-radius:6px;position:relative;padding-left:70px}
+.step-num{position:absolute;left:20px;top:24px;width:36px;height:36px;border-radius:50%;background:#CE1126;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px}
+.step-title{margin-bottom:8px;color:#1a1a1a;font-weight:600}
+.step-text{color:#444}
+code{background:#f4f4f4;padding:3px 8px;border-radius:3px;color:#d63384;border:1px solid #e0e0e0;font-family:ui-monospace,'Courier New',monospace;font-size:15px}
+.prompt-box{background:#fff;border:2px solid #e0e0e0;padding:18px 20px;margin:16px 0;border-radius:4px;font-style:italic;color:#555;font-family:ui-monospace,'Courier New',monospace}
+a{color:#B71C1C;text-decoration:none;border-bottom:1px solid transparent;transition:all .2s}
+a:hover{border-bottom-color:#B71C1C;color:#8B0000}
+ul{margin-left:28px;margin-bottom:16px;list-style:none}
+li{margin-bottom:10px;color:#444;padding-left:24px;position:relative}
+li:before{content:"▸";position:absolute;left:0;color:#CE1126;font-weight:bold}
+ol{margin-left:28px;margin-bottom:16px}
+ol li{margin-bottom:10px;padding-left:8px}
+ol li:before{content:none}
+.footer{text-align:center;margin-top:60px;padding-top:24px;border-top:2px solid #e0e0e0;color:#888;font-size:14px}
 </style>
 </head>
 <body>
-<canvas id="matrix"></canvas>
 <div class="content">
 <div class="header">
-<div class="header-title text-xl">&gt; GITHUB COPILOT USER GUIDE</div>
+<div class="welcome">Welcome to the real world</div>
+<div class="header-title text-xl">GitHub Copilot User Guide</div>
 <div class="header-subtitle text-base">Two agents. Four tutorials. Your training path to mastery.</div>
 </div>
 
 <div class="warning">
-<div class="warning-title text-md">YOU TOOK THE RED PILL</div>
-<div class="text-sm" style="color:var(--matrix-green)">This is the full setup. Two agents, four tutorials, deeper capability. More work. Worth it.</div>
+<div class="warning-title text-md">You Took the Red Pill</div>
+<div class="text-sm">This is the full setup. Two agents, four tutorials, deeper capability. More work. Worth it.</div>
 </div>
 
 <div class="section">
-<div class="section-title text-lg">&gt; YOUR TWO AGENTS</div>
-<div class="terminal"><div class="terminal-body">
+<div class="section-title text-lg">Your Two Agents</div>
 <div class="section-text text-base"><strong>AI Maker (Yellow tab):</strong> Your day-to-day partner. Emails, documents, brainstorming, presentations, meeting prep. Use AI Maker for work you already do.</div>
 <div class="section-text text-base"><strong>AI Workbench (Red tab):</strong> Your technical partner. GitHub management, PowerShell scripts, data analysis, research with citations, debugging. Use AI Workbench for technical depth.</div>
 <div class="highlight-box text-sm"><strong>When in doubt, start with AI Maker.</strong> It will hand off to AI Workbench if the task needs technical depth.</div>
@@ -58,7 +61,7 @@ ul{margin-left:20px;margin-bottom:16px}li{margin-bottom:8px;opacity:.9}li::marke
 </div>
 
 <div class="section">
-<div class="section-title text-lg">&gt; TUTORIAL 1: MY GITHUB HOME</div>
+<div class="section-title text-lg">Tutorial 1: My GitHub Home</div>
 <div class="tutorial-badge">TUTORIAL 1 OF 4 • USE AI WORKBENCH</div>
 <div class="info-box">
 <div class="info-title text-md">What you will build</div>
@@ -80,7 +83,7 @@ ul{margin-left:20px;margin-bottom:16px}li{margin-bottom:8px;opacity:.9}li::marke
 </div>
 
 <div class="section">
-<div class="section-title text-lg">&gt; TUTORIAL 2: MEETING INTELLIGENCE</div>
+<div class="section-title text-lg">Tutorial 2: Meeting Intelligence</div>
 <div class="tutorial-badge">TUTORIAL 2 OF 4 • USE AI WORKBENCH + WORKIQ</div>
 <div class="info-box">
 <div class="info-title text-md">What you will build</div>
@@ -102,7 +105,7 @@ ul{margin-left:20px;margin-bottom:16px}li{margin-bottom:8px;opacity:.9}li::marke
 </div>
 
 <div class="section">
-<div class="section-title text-lg">&gt; TUTORIAL 3: TEAM ONBOARDING KIT</div>
+<div class="section-title text-lg">Tutorial 3: Team Onboarding Kit</div>
 <div class="tutorial-badge">TUTORIAL 3 OF 4 • USE AI MAKER</div>
 <div class="info-box">
 <div class="info-title text-md">What you will build</div>
@@ -124,7 +127,7 @@ ul{margin-left:20px;margin-bottom:16px}li{margin-bottom:8px;opacity:.9}li::marke
 </div>
 
 <div class="section">
-<div class="section-title text-lg">&gt; TUTORIAL 4: YOUR VOICE SKILL</div>
+<div class="section-title text-lg">Tutorial 4: Your Voice Skill</div>
 <div class="tutorial-badge">TUTORIAL 4 OF 4 • USE AI WORKBENCH</div>
 <div class="info-box">
 <div class="info-title text-md">What you will build</div>
