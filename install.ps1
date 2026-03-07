@@ -447,11 +447,7 @@ for ($i = 0; $i -lt $themeChoices.Count; $i++) {
 }
 Write-Host "    [Enter] powerlevel10k_rainbow (default)"
 Write-Host ""
-Write-Host "  Not sure what these look like? Browse all themes here:" -ForegroundColor DarkCyan
-Write-Host "    https://ohmyposh.dev/docs/themes" -ForegroundColor Cyan
-Write-Host "  The theme controls your terminal prompt style (colors, icons, git status)." -ForegroundColor DarkGray
-Write-Host "  It requires the CascadiaCode Nerd Font installed above to display correctly." -ForegroundColor DarkGray
-Write-Host "  More about fonts: https://ohmyposh.dev/docs/installation/fonts" -ForegroundColor DarkGray
+Write-Host "  Choose the default or find more themes to install later: https://ohmyposh.dev/docs/themes" -ForegroundColor DarkCyan
 Write-Host ""
 $themeInput = Read-Host "  Enter number"
 $selectedTheme = "powerlevel10k_rainbow"
