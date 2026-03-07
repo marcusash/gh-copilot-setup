@@ -440,24 +440,8 @@ if (Get-Command oh-my-posh -ErrorAction SilentlyContinue) {
 }
 
 Write-Host ""
-Write-Host "  Choose a terminal theme:" -ForegroundColor Cyan
-$themeChoices = @("powerlevel10k_rainbow", "dracula", "jandedobbeleer", "atomic", "nord", "pure")
-for ($i = 0; $i -lt $themeChoices.Count; $i++) {
-    Write-Host "    [$($i+1)] $($themeChoices[$i])"
-}
-Write-Host "    [Enter] powerlevel10k_rainbow (default)"
-Write-Host ""
-Write-Host "  Choose the default or find more themes to install later: https://ohmyposh.dev/docs/themes" -ForegroundColor DarkCyan
-Write-Host ""
-$themeInput = Read-Host "  Enter number"
 $selectedTheme = "powerlevel10k_rainbow"
-if ($themeInput -match '^\d+$') {
-    $idx = [int]$themeInput - 1
-    if ($idx -ge 0 -and $idx -lt $themeChoices.Count) {
-        $selectedTheme = $themeChoices[$idx]
-    }
-}
-Write-Host "  Selected: $selectedTheme" -ForegroundColor Green
+Write-Host "  Terminal theme: powerlevel10k_rainbow" -ForegroundColor Green
 
 # ─────────────────────────────────────────────────────────────
 # Section 10 — Shell Profiles
@@ -896,10 +880,13 @@ Write-Host "    Productivity   - Windows Terminal, Handy (Speech-to-Text)" -Fore
 Write-Host "    Agency         - Agentic Engineering Platform" -ForegroundColor Gray
 Write-Host "    Git            - Configured as $SETUP_NAME" -ForegroundColor Gray
 Write-Host "    GitHub         - Authenticated ($SETUP_GITHUB) + Copilot extension" -ForegroundColor Gray
-Write-Host "    Terminal       - Oh My Posh themed ($selectedTheme)" -ForegroundColor Gray
-Write-Host "    AI Maker       - Workspace at C:\AIMaker (yellow tab)" -ForegroundColor Gray
-Write-Host "    AI Workbench   - Workspace at C:\AIWorkbench (red tab)" -ForegroundColor Gray
-Write-Host "    Shortcut       - AI Agents on your Desktop" -ForegroundColor Gray
+Write-Host "    Terminal       - Oh My Posh themed (powerlevel10k_rainbow)" -ForegroundColor Gray
+    Write-Host "    AI Maker       - Workspace at C:\AIMaker (yellow tab)" -ForegroundColor Gray
+    Write-Host "    AI Workbench   - Workspace at C:\AIWorkbench (red tab)" -ForegroundColor Gray
+    Write-Host "    Shortcut       - AI Agents on your Desktop" -ForegroundColor Gray
+    Write-Host ""
+    Write-Host "  Your terminal theme is powerlevel10k_rainbow." -ForegroundColor Cyan
+    Write-Host "  To explore other themes after setup: https://ohmyposh.dev/docs/themes" -ForegroundColor DarkCyan
 Write-Host ""
 Write-Host "  To start your agents:" -ForegroundColor White
 Write-Host "    Double-click 'AI Agents' on your Desktop" -ForegroundColor Gray
