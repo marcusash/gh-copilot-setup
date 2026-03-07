@@ -441,14 +441,14 @@ if (Get-Command oh-my-posh -ErrorAction SilentlyContinue) {
 
 Write-Host ""
 Write-Host "  Choose a terminal theme:" -ForegroundColor Cyan
-$themeChoices = @("dracula", "jandedobbeleer", "atomic", "nord", "pure")
+$themeChoices = @("powerlevel10k_rainbow", "dracula", "jandedobbeleer", "atomic", "nord", "pure")
 for ($i = 0; $i -lt $themeChoices.Count; $i++) {
     Write-Host "    [$($i+1)] $($themeChoices[$i])"
 }
-Write-Host "    [Enter] dracula (default)"
+Write-Host "    [Enter] powerlevel10k_rainbow (default)"
 Write-Host ""
 $themeInput = Read-Host "  Enter number"
-$selectedTheme = "dracula"
+$selectedTheme = "powerlevel10k_rainbow"
 if ($themeInput -match '^\d+$') {
     $idx = [int]$themeInput - 1
     if ($idx -ge 0 -and $idx -lt $themeChoices.Count) {
