@@ -631,6 +631,24 @@ if (Test-Path (Join-Path $pcSetupDest ".git")) {
 }
 
 # ─────────────────────────────────────────────────────────────
+# Source file check — if bootstrapped from temp, clone source repo
+# ─────────────────────────────────────────────────────────────
+if (-not (Test-Path (Join-Path $scriptDir "agents\ai-maker"))) {
+    $sourceRepoUrl = "https://github.com/marcusash/gh-copilot-setup"
+    $sourceTempDir = Join-Path $env:TEMP "gh-copilot-setup-src"
+    if (-not (Test-Path $sourceTempDir)) {
+        Write-Host "  Downloading agent source files..." -ForegroundColor Yellow
+        git clone $sourceRepoUrl $sourceTempDir --depth 1 --quiet 2>&1 | Out-Null
+    }
+    if (Test-Path (Join-Path $sourceTempDir "agents\ai-maker")) {
+        $scriptDir = $sourceTempDir
+        Write-Host "  [OK]   Agent source files ready" -ForegroundColor Green
+    } else {
+        Write-Host "  [WARN] Could not download agent source files from $sourceRepoUrl" -ForegroundColor Yellow
+    }
+}
+
+# ─────────────────────────────────────────────────────────────
 # Section 13 — AI Maker Workspace
 # ─────────────────────────────────────────────────────────────
 Step "Setting up AI Maker workspace"
@@ -824,7 +842,10 @@ if (-not $WhatIf) {
 # ─────────────────────────────────────────────────────────────
 Step "Creating desktop shortcut"
 
-$launcherSource = Join-Path $scriptDir "start.ps1"
+$launcherSource = "C:\GitHub\pc-setup\start.ps1"
+if (-not (Test-Path $launcherSource)) {
+    $launcherSource = Join-Path $scriptDir "start.ps1"
+}
 $shortcutDir = [Environment]::GetFolderPath('Desktop')
 $consolePath = Join-Path $shortcutDir "AI Agents.lnk"
 
@@ -837,7 +858,7 @@ if (Test-Path $launcherSource) {
         $s = $shell.CreateShortcut($consolePath)
         $s.TargetPath = $pwshPath
         $s.Arguments = "-ExecutionPolicy Bypass -File `"$launcherSource`""
-        $s.WorkingDirectory = $scriptDir
+        $s.WorkingDirectory = "C:\GitHub\pc-setup"
         $s.Description = "Launch AI Maker and AI Workbench in Windows Terminal"
         $ghExe = "C:\Program Files\GitHub CLI\gh.exe"
         if (Test-Path $ghExe) { $s.IconLocation = "$ghExe,0" }
