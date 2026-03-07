@@ -602,7 +602,7 @@ if (Test-Path (Join-Path $pcSetupDest ".git")) {
     Write-Host "  would copy setup files to $pcSetupDest, create GitHub repo, and push" -ForegroundColor Yellow
 } else {
     New-Item -ItemType Directory -Path $pcSetupDest -Force | Out-Null
-    Copy-Item "$scriptDir\*" $pcSetupDest -Recurse -Force
+    Get-ChildItem -Path $scriptDir -Exclude "*.tmp" | Copy-Item -Destination $pcSetupDest -Recurse -Force
     Set-Location $pcSetupDest
     git init | Out-Null
     git add -A | Out-Null
