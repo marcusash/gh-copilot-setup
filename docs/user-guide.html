@@ -191,11 +191,11 @@
     margin: 16px 0;
     font-size: 14px;
   }
-  .callout.tip { background: #F0FDF4; border: 1px solid #86EFAC; }
-  .callout.note { background: var(--accent-light); border: 1px solid #93C5FD; }
-  .callout.important { background: #FFFBEB; border: 1px solid #FCD34D; }
+  .callout.tip { background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); }
+  .callout.note { background: rgba(88, 166, 255, 0.1); border: 1px solid rgba(88, 166, 255, 0.3); }
+  .callout.important { background: rgba(251, 191, 36, 0.1); border: 1px solid rgba(251, 191, 36, 0.3); }
   .callout-icon { font-size: 18px; flex-shrink: 0; display: none; }
-  .callout p { margin: 0; color: #334155; }
+  .callout p { margin: 0; color: var(--body); }
   /* Phase labels */
   .phase-label {
     display: inline-flex;
@@ -479,7 +479,7 @@
       </ul>
 
       <div class="callout note">
-        <span class="callout-icon">ℹ️</span>
+        <span class="callout-icon"></span>
         <p>Your pc-setup repo is already on GitHub at <code>github.com/YOUR_GITHUB_USERNAME/pc-setup</code>. Every time you improve your setup and push the changes, your future self (or a new machine) benefits from the update.</p>
       </div>
     </div>
@@ -593,7 +593,7 @@ git push origin main</code></pre>
       <p>AI Workbench will open a browser window with a device code login. Sign in with your Microsoft account. After signing in, close the browser and come back to AI Workbench. WorkIQ is now connected.</p>
 
       <div class="callout note">
-        <span class="callout-icon">ℹ️</span>
+        <span class="callout-icon"></span>
         <p>WorkIQ authentication lasts for your session. The next time you launch AI Workbench, you may need to re-authenticate. This is normal. It takes 10 seconds.</p>
       </div>
     </div>
@@ -924,7 +924,7 @@ git push origin main</code></pre>
       <p>AI Maker will update <code>C:\AIMaker\.github\skills\my-voice.md</code> directly and apply the change going forward. You refine your voice skill by talking to AI Maker, not by editing text files.</p>
 
       <div class="callout note">
-        <span class="callout-icon">ℹ️</span>
+        <span class="callout-icon"></span>
         <p><strong>This is normal.</strong> Voice skills improve with iteration. Most people do 2-3 correction conversations before the output feels natural. Your anchor email is your reference point every time.</p>
       </div>
     </div>
