@@ -588,6 +588,25 @@ if ($wtSettings) {
 }
 
 # ─────────────────────────────────────────────────────────────
+# Source file check — if bootstrapped from temp, clone source repo
+# Must run BEFORE Section 12 so $scriptDir has agents/ and start.ps1
+# ─────────────────────────────────────────────────────────────
+if (-not (Test-Path (Join-Path $scriptDir "agents\ai-maker"))) {
+    $sourceRepoUrl = "https://github.com/marcusash/gh-copilot-setup"
+    $sourceTempDir = Join-Path $env:TEMP "gh-copilot-setup-src"
+    if (-not (Test-Path $sourceTempDir)) {
+        Write-Host "  Downloading agent source files..." -ForegroundColor Yellow
+        git clone $sourceRepoUrl $sourceTempDir --depth 1 --quiet 2>&1 | Out-Null
+    }
+    if (Test-Path (Join-Path $sourceTempDir "agents\ai-maker")) {
+        $scriptDir = $sourceTempDir
+        Write-Host "  [OK]   Agent source files ready" -ForegroundColor Green
+    } else {
+        Write-Host "  [WARN] Could not download agent source files from $sourceRepoUrl" -ForegroundColor Yellow
+    }
+}
+
+# ─────────────────────────────────────────────────────────────
 # Section 12 — Clone pc-setup Repo
 # ─────────────────────────────────────────────────────────────
 if (-not $SkipRepos) {
@@ -628,24 +647,6 @@ if (Test-Path (Join-Path $pcSetupDest ".git")) {
 
 } else {
     Step "Cloning pc-setup repo — SKIPPED (-SkipRepos)"
-}
-
-# ─────────────────────────────────────────────────────────────
-# Source file check — if bootstrapped from temp, clone source repo
-# ─────────────────────────────────────────────────────────────
-if (-not (Test-Path (Join-Path $scriptDir "agents\ai-maker"))) {
-    $sourceRepoUrl = "https://github.com/marcusash/gh-copilot-setup"
-    $sourceTempDir = Join-Path $env:TEMP "gh-copilot-setup-src"
-    if (-not (Test-Path $sourceTempDir)) {
-        Write-Host "  Downloading agent source files..." -ForegroundColor Yellow
-        git clone $sourceRepoUrl $sourceTempDir --depth 1 --quiet 2>&1 | Out-Null
-    }
-    if (Test-Path (Join-Path $sourceTempDir "agents\ai-maker")) {
-        $scriptDir = $sourceTempDir
-        Write-Host "  [OK]   Agent source files ready" -ForegroundColor Green
-    } else {
-        Write-Host "  [WARN] Could not download agent source files from $sourceRepoUrl" -ForegroundColor Yellow
-    }
 }
 
 # ─────────────────────────────────────────────────────────────
