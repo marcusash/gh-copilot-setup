@@ -121,9 +121,30 @@ foreach ($psrlPath in $psrlPaths) {
 }
 
 if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
-    Write-Host "  [FAIL] winget not found. Install 'App Installer' from the Microsoft Store first." -ForegroundColor Red
-    Write-Host "         https://aka.ms/getwinget" -ForegroundColor Gray
-    exit 1
+    Write-Host "  winget not found. Installing App Installer automatically..." -ForegroundColor Yellow
+    $ProgressPreference = 'SilentlyContinue'
+    try {
+        Write-Host "  Installing VC++ runtime dependency..." -ForegroundColor Gray
+        Add-AppxPackage -Uri "https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx" -ErrorAction Stop
+
+        Write-Host "  Installing UI Xaml dependency..." -ForegroundColor Gray
+        $xaml = "$env:TEMP\ui-xaml.appx"
+        Invoke-WebRequest "https://github.com/microsoft/microsoft-ui-xaml/releases/download/v2.8.6/Microsoft.UI.Xaml.2.8.x64.appx" -OutFile $xaml -UseBasicParsing
+        Add-AppxPackage $xaml -ErrorAction Stop
+
+        Write-Host "  Installing winget..." -ForegroundColor Gray
+        $pkg = "$env:TEMP\winget.msixbundle"
+        Invoke-WebRequest "https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle" -OutFile $pkg -UseBasicParsing
+        Add-AppxPackage $pkg -ErrorAction Stop
+
+        Refresh-Path
+        if (-not (Get-Command winget -ErrorAction SilentlyContinue)) { throw "winget still not found after install" }
+        Write-Host "  [OK]   winget installed" -ForegroundColor Green
+    } catch {
+        Write-Host "  [FAIL] Could not auto-install winget: $_" -ForegroundColor Red
+        Write-Host "         Install manually: https://aka.ms/getwinget  then re-run." -ForegroundColor Gray
+        exit 1
+    }
 }
 
 Write-Host ""
