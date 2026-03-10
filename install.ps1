@@ -78,10 +78,16 @@ function Step {
     Write-Host "`n[$script:stepNum/$totalSteps] $prefix$Title" -ForegroundColor Yellow
 }
 
+# Set UTF-8 output encoding so special characters display correctly in PS5.1
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$OutputEncoding = [System.Text.Encoding]::UTF8
+# Disable any trace mode that might have been active in the calling session
+Set-PSDebug -Off
+
 Write-Host ""
-Write-Host "  ╔══════════════════════════════════════╗" -ForegroundColor Cyan
-Write-Host "  ║         AI Agent PC Setup            ║" -ForegroundColor Cyan
-Write-Host "  ╚══════════════════════════════════════╝" -ForegroundColor Cyan
+Write-Host "  +======================================+" -ForegroundColor Cyan
+Write-Host "  |         AI Agent PC Setup            |" -ForegroundColor Cyan
+Write-Host "  +======================================+" -ForegroundColor Cyan
 Write-Host ""
 
 if ($WhatIf) {
@@ -486,9 +492,13 @@ foreach ($p in $profiles) {
 
     if (Test-Path $p) {
         $content = Get-Content $p -Raw
-        if ($content -match 'PC-SETUP BEGIN') {
-            $newContent = $content -replace '(?s)# === PC-SETUP BEGIN ===.*?# === PC-SETUP END ===', $profileBlock.Trim()
-            if (-not $WhatIf) { Set-Content -Path $p -Value $newContent -Force }
+        # Guard: if END marker exists (possibly with junk after it from a corrupted append),
+        # clean all PC-SETUP blocks and rewrite cleanly.
+        if ($content -match 'PC-SETUP END') {
+            # Strip all PC-SETUP blocks (handles corrupted trailing text on END marker)
+            $newContent = $content -replace '(?s)# === PC-SETUP BEGIN ===.*?# === PC-SETUP END ===[^\r\n]*', ''
+            $newContent = $newContent.TrimEnd() + "`n`n" + $profileBlock.Trim() + "`n"
+            if (-not $WhatIf) { [System.IO.File]::WriteAllText($p, $newContent, [System.Text.Encoding]::UTF8) }
             Write-Host "  $label profile - refreshed" -ForegroundColor Green
             continue
         }
@@ -808,9 +818,9 @@ if (Test-Path $launcherSource) {
 Write-Host ""
 
 if ($failures.Count -gt 0) {
-    Write-Host "  ╔══════════════════════════════════════╗" -ForegroundColor Yellow
-    Write-Host "  ║   Setup completed with errors        ║" -ForegroundColor Yellow
-    Write-Host "  ╚══════════════════════════════════════╝" -ForegroundColor Yellow
+    Write-Host "  +======================================+" -ForegroundColor Yellow
+    Write-Host "  |   Setup completed with errors        |" -ForegroundColor Yellow
+    Write-Host "  +======================================+" -ForegroundColor Yellow
     Write-Host ""
     Write-Host "  Failed steps ($($failures.Count)):" -ForegroundColor Red
     foreach ($f in $failures) { Write-Host "    [FAIL] $f" -ForegroundColor Red }
@@ -819,9 +829,9 @@ if ($failures.Count -gt 0) {
     Write-Host "    powershell -ExecutionPolicy Bypass -File .\install.ps1" -ForegroundColor Gray
     Write-Host ""
 } else {
-    Write-Host "  ╔══════════════════════════════════════╗" -ForegroundColor Green
-    Write-Host "  ║         Setup Complete!              ║" -ForegroundColor Green
-    Write-Host "  ╚══════════════════════════════════════╝" -ForegroundColor Green
+    Write-Host "  +======================================+" -ForegroundColor Green
+    Write-Host "  |         Setup Complete!              |" -ForegroundColor Green
+    Write-Host "  +======================================+" -ForegroundColor Green
     Write-Host ""
 }
 
