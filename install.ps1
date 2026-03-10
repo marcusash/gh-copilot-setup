@@ -166,6 +166,10 @@ if (-not $sourceDir -or -not (Test-Path (Join-Path $sourceDir ".git"))) {
             Write-Host "  [WARN] Run: git clone https://github.com/YOUR_GITHUB_USERNAME/pc-setup $pcSetupPath" -ForegroundColor Yellow
         } else {
             $sourceDir = $pcSetupPath
+            Write-Host "  Pulling latest from gh-copilot-setup..." -ForegroundColor Gray
+            Push-Location $pcSetupPath
+            git pull --quiet 2>&1 | Out-Null
+            Pop-Location
         }
     }
 }
