@@ -423,9 +423,8 @@ if (-not $SkipThemes) {
 
 Step "Setting up Oh My Posh + themes"
 
-Write-Host "  Oh My Posh... " -NoNewline
 if (Get-Command oh-my-posh -ErrorAction SilentlyContinue) {
-    Write-Host "already installed ($(oh-my-posh version))" -ForegroundColor Green
+    Write-Host "  Oh My Posh... already installed ($(oh-my-posh version))" -ForegroundColor Green
 } else {
     Install-WingetApp -Id "JanDeDobbeleer.OhMyPosh" -Name "Oh My Posh"
     Refresh-Path
@@ -434,28 +433,49 @@ if (Get-Command oh-my-posh -ErrorAction SilentlyContinue) {
 Write-Host "  Installing Nerd Font (CascadiaCode)... " -NoNewline
 $fontInstalled = $false
 try {
-    $output = oh-my-posh font install CascadiaCode --user 2>&1 | Out-String
-    if ($output -match "Successfully") { $fontInstalled = $true }
+    oh-my-posh font install CascadiaCode 2>&1 | Out-Null
+    if ($LASTEXITCODE -eq 0) { $fontInstalled = $true }
 } catch {}
-if (-not $fontInstalled) {
-    try {
-        $output = oh-my-posh font install CascadiaCode 2>&1 | Out-String
-        if ($output -match "Successfully") { $fontInstalled = $true }
-    } catch {}
-}
 if ($fontInstalled) { Write-Host "installed" -ForegroundColor Green }
 else { Write-Host "manual install needed: oh-my-posh font install CascadiaCode" -ForegroundColor Red }
 
-# Theme picker
-$themesPath = $null
-if (Get-Command oh-my-posh -ErrorAction SilentlyContinue) {
-    $themesPath = & oh-my-posh get shell-themes-path 2>$null
-    if (-not $themesPath) { $themesPath = $env:POSH_THEMES_PATH }
-}
+# Download curated themes to the user config dir (where oh-my-posh looks by default)
+$ompConfigDir = "$env:USERPROFILE\.config\oh-my-posh"
+if (-not (Test-Path $ompConfigDir)) { New-Item -Path $ompConfigDir -ItemType Directory -Force | Out-Null }
 
-Write-Host ""
+$themesToDownload = @(
+    "powerlevel10k_rainbow", "dracula", "catppuccin", "gruvbox",
+    "spaceship", "tokyo", "jandedobbeleer"
+)
+$baseUrl = "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes"
+Write-Host "  Downloading oh-my-posh themes..." -NoNewline
+$downloaded = 0
+foreach ($t in $themesToDownload) {
+    $dest = "$ompConfigDir\$t.omp.json"
+    if (-not (Test-Path $dest)) {
+        if ($WhatIf) { $downloaded++ }
+        else {
+            try {
+                Invoke-WebRequest "$baseUrl/$t.omp.json" -OutFile $dest -UseBasicParsing -ErrorAction Stop
+                $downloaded++
+            } catch { Write-Host "  (skipped $t)" -ForegroundColor Yellow }
+        }
+    }
+}
+if ($WhatIf) { Write-Host " would download $($themesToDownload.Count) themes" -ForegroundColor Yellow }
+elseif ($downloaded -gt 0) { Write-Host " $downloaded downloaded" -ForegroundColor Green }
+else { Write-Host " already present" -ForegroundColor Green }
+
+# Set default theme if no current-theme.txt
+$themeFile = "$ompConfigDir\current-theme.txt"
 $selectedTheme = "powerlevel10k_rainbow"
-Write-Host "  Terminal theme: powerlevel10k_rainbow" -ForegroundColor Green
+if (-not (Test-Path $themeFile)) {
+    if (-not $WhatIf) { $selectedTheme | Set-Content $themeFile -Encoding UTF8 }
+} else {
+    $savedTheme = (Get-Content $themeFile -Raw).Trim()
+    if ($savedTheme -and (Test-Path "$ompConfigDir\$savedTheme.omp.json")) { $selectedTheme = $savedTheme }
+}
+Write-Host "  Terminal theme: $selectedTheme" -ForegroundColor Green
 
 # ─────────────────────────────────────────────────────────────
 # Section 10 - Shell Profiles
@@ -469,12 +489,44 @@ $profileBlock = @"
 function ghcs { gh copilot suggest @args }
 function ghce { gh copilot explain @args }
 
-# Oh My Posh prompt theme
-`$_ompTheme = "$selectedTheme"
-`$_ompThemesPath = & oh-my-posh get shell-themes-path 2>`$null
-if (-not `$_ompThemesPath) { `$_ompThemesPath = `$env:POSH_THEMES_PATH }
-if (`$_ompThemesPath -and (Test-Path "`$_ompThemesPath\`$_ompTheme.omp.json")) {
-    oh-my-posh init pwsh --config "`$_ompThemesPath\`$_ompTheme.omp.json" | Invoke-Expression
+# Oh My Posh - persists theme across sessions via current-theme.txt
+`$_ompDir = "`$env:USERPROFILE\.config\oh-my-posh"
+`$_themeFile = "`$_ompDir\current-theme.txt"
+if (Test-Path `$_themeFile) { `$env:POSH_THEME = (Get-Content `$_themeFile -Raw).Trim() }
+else { `$env:POSH_THEME = "$selectedTheme" }
+`$_ompConfig = "`$_ompDir\`$env:POSH_THEME.omp.json"
+if ((Get-Command oh-my-posh -ErrorAction SilentlyContinue) -and (Test-Path `$_ompConfig)) {
+    oh-my-posh init pwsh --config `$_ompConfig | Invoke-Expression
+}
+
+function Set-Theme {
+    param([string]`$Name)
+    `$ompDir = "`$env:USERPROFILE\.config\oh-my-posh"
+    `$available = (Get-ChildItem "`$ompDir\*.omp.json").BaseName -replace '\.omp`$'
+    if (-not `$Name) {
+        Write-Host "Available themes:" -ForegroundColor Cyan
+        `$available | ForEach-Object {
+            if (`$_ -eq `$env:POSH_THEME) { Write-Host "  * `$_  (active)" -ForegroundColor Green }
+            else { Write-Host "  - `$_" }
+        }
+        Write-Host "`nUsage: Set-Theme <name>" -ForegroundColor Gray
+        return
+    }
+    `$themePath = "`$ompDir\`$Name.omp.json"
+    if (-not (Test-Path `$themePath)) {
+        Write-Host "Theme '`$Name' not found. Run Set-Theme with no args to list." -ForegroundColor Red
+        return
+    }
+    `$env:POSH_THEME = `$Name
+    `$Name | Set-Content "`$ompDir\current-theme.txt" -Force
+    oh-my-posh init pwsh --config `$themePath | Invoke-Expression
+    Write-Host "Switched to '`$Name' (saved)" -ForegroundColor Green
+}
+
+Register-ArgumentCompleter -CommandName Set-Theme -ParameterName Name -ScriptBlock {
+    param(`$cmd, `$param, `$word)
+    (Get-ChildItem "`$env:USERPROFILE\.config\oh-my-posh\*.omp.json").BaseName -replace '\.omp`$' |
+        Where-Object { `$_ -like "`$word*" }
 }
 # === PC-SETUP END ===
 "@
