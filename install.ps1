@@ -605,6 +605,15 @@ if ($wtSettings) {
         Write-Host "  Terminal bell disabled" -ForegroundColor Green
     }
 
+    # Set Nerd Font so Oh My Posh glyphs render correctly
+    $nerdFont = "CaskaydiaCove NF"
+    if (-not $settings.profiles.defaults.font -or $settings.profiles.defaults.font.face -ne $nerdFont) {
+        $settings.profiles.defaults | Add-Member -NotePropertyName "font" -NotePropertyValue ([PSCustomObject]@{
+            face = $nerdFont
+        }) -Force
+        Write-Host "  Nerd Font set: $nerdFont" -ForegroundColor Green
+    }
+
     # Add AI Maker profile (Yellow)
     $aiMakerGuid = "{a1f2e3d4-b5c6-7890-abcd-ef0123456789}"
     $aiWorkbenchGuid = "{b2e3f4a5-c6d7-8901-bcde-f01234567890}"
