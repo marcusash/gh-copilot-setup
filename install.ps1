@@ -825,6 +825,16 @@ Write-Host "  Agent files personalized for $firstName" -ForegroundColor Green
 Step "Setting up WorkIQ (Microsoft 365 integration)"
 
 $workiqScript = Join-Path $sourceDir "install-workiq.ps1"
+# Always download the latest install-workiq.ps1 from GitHub to avoid stale local copies
+$workiqUrl = "https://raw.githubusercontent.com/marcusash/gh-copilot-setup/main/install-workiq.ps1"
+$workiqTemp = Join-Path $env:TEMP "gh-copilot-setup-workiq.ps1"
+try {
+    Invoke-WebRequest -Uri $workiqUrl -OutFile $workiqTemp -UseBasicParsing -ErrorAction Stop
+    $workiqScript = $workiqTemp
+    Write-Host "  Using latest install-workiq.ps1 from GitHub" -ForegroundColor Gray
+} catch {
+    Write-Host "  Could not download install-workiq.ps1, using local copy" -ForegroundColor Yellow
+}
 if (Test-Path $workiqScript) {
     $wiqSuccess = $false
     try { & $workiqScript -WhatIf:$WhatIf; $wiqSuccess = ($LASTEXITCODE -eq 0) } catch {}
