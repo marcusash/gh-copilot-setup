@@ -41,8 +41,12 @@ function Refresh-Path {
 function Read-WTSettings {
     param([string]$Path)
     $raw = Get-Content $Path -Raw
-    $lines = $raw -split "`n" | Where-Object { $_ -notmatch '^\s*//' -and $_ -notmatch '^\s*"\$' }
-    $clean = ($lines -join "`n") -replace ',\s*([}\]])', '$1'
+    $lines = $raw -split "`n" | Where-Object { $_ -notmatch '^\s*//' }
+    $clean = $lines -join "`n"
+    if ($PSVersionTable.PSVersion.Major -ge 7) {
+        return $clean | ConvertFrom-Json -AllowTrailingCommas
+    }
+    $clean = $clean -replace ',\s*([}\]])', '$1'
     return $clean | ConvertFrom-Json
 }
 
@@ -62,6 +66,7 @@ function Install-WingetApp {
 }
 
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$sourceDir = $scriptDir   # may be redirected below if script was bootstrapped from temp
 $stepNum = 0
 $totalSteps = 18
 $failures = @()
@@ -145,7 +150,7 @@ if (-not (Get-Command pwsh -ErrorAction SilentlyContinue)) {
     Write-Host "  [OK]   PowerShell 7 found" -ForegroundColor Green
 }
 
-if (-not $scriptDir -or -not (Test-Path (Join-Path $scriptDir ".git"))) {
+if (-not $sourceDir -or -not (Test-Path (Join-Path $sourceDir ".git"))) {
     if (Get-Command git -ErrorAction SilentlyContinue) {
         $pcSetupPath = "C:\GitHub\pc-setup"
         if (-not (Test-Path $pcSetupPath)) {
@@ -154,7 +159,7 @@ if (-not $scriptDir -or -not (Test-Path (Join-Path $scriptDir ".git"))) {
             # The URL below will be updated once you push your repo to GitHub
             Write-Host "  [WARN] Run: git clone https://github.com/YOUR_GITHUB_USERNAME/pc-setup $pcSetupPath" -ForegroundColor Yellow
         } else {
-            $scriptDir = $pcSetupPath
+            $sourceDir = $pcSetupPath
         }
     }
 }
@@ -166,7 +171,7 @@ Write-Host ""
 # ─────────────────────────────────────────────────────────────
 Step "Collecting your information"
 
-$configPath = Join-Path $scriptDir "user-config.ps1"
+$configPath = Join-Path $sourceDir "user-config.ps1"
 $SETUP_NAME = ""
 $SETUP_GITHUB = ""
 $SETUP_EMAIL = ""
@@ -592,9 +597,9 @@ if ($wtSettings) {
 
 # ─────────────────────────────────────────────────────────────
 # Source file check - if bootstrapped from temp, clone source repo
-# Must run BEFORE Section 12 so $scriptDir has agents/ and start.ps1
+# Must run BEFORE Section 12 so $sourceDir has agents/ and start.ps1
 # ─────────────────────────────────────────────────────────────
-if (-not (Test-Path (Join-Path $scriptDir "agents\ai-maker"))) {
+if (-not (Test-Path (Join-Path $sourceDir "agents\ai-maker"))) {
     $sourceRepoUrl = "https://github.com/marcusash/gh-copilot-setup"
     $sourceTempDir = Join-Path $env:TEMP "gh-copilot-setup-src"
     if (-not (Test-Path $sourceTempDir)) {
@@ -602,7 +607,7 @@ if (-not (Test-Path (Join-Path $scriptDir "agents\ai-maker"))) {
         git clone $sourceRepoUrl $sourceTempDir --depth 1 --quiet 2>&1 | Out-Null
     }
     if (Test-Path (Join-Path $sourceTempDir "agents\ai-maker")) {
-        $scriptDir = $sourceTempDir
+        $sourceDir = $sourceTempDir
         Write-Host "  [OK]   Agent source files ready" -ForegroundColor Green
     } else {
         Write-Host "  [WARN] Could not download agent source files from $sourceRepoUrl" -ForegroundColor Yellow
@@ -624,7 +629,7 @@ if (Test-Path (Join-Path $pcSetupDest ".git")) {
     Write-Host "  would copy setup files to $pcSetupDest, create GitHub repo, and push" -ForegroundColor Yellow
 } else {
     New-Item -ItemType Directory -Path $pcSetupDest -Force | Out-Null
-    Get-ChildItem -Path $scriptDir -Exclude "*.tmp" | Copy-Item -Destination $pcSetupDest -Recurse -Force
+    Get-ChildItem -Path $sourceDir -Exclude "*.tmp" | Copy-Item -Destination $pcSetupDest -Recurse -Force
     Set-Location $pcSetupDest
     git init | Out-Null
     git add -A | Out-Null
@@ -673,7 +678,7 @@ foreach ($d in $aiMakerDirs) {
 }
 
 # Copy agent instructions and skills from the repo
-$aiMakerSource = Join-Path $scriptDir "agents\ai-maker"
+$aiMakerSource = Join-Path $sourceDir "agents\ai-maker"
 if (Test-Path $aiMakerSource) {
     if (-not $WhatIf) {
         Copy-Item "$aiMakerSource\copilot-instructions.md" "C:\AIMaker\.github\copilot-instructions.md" -Force
@@ -710,7 +715,7 @@ foreach ($d in $aiWorkbenchDirs) {
     if (-not $WhatIf) { New-Item -ItemType Directory -Path $d -Force -ErrorAction SilentlyContinue | Out-Null }
 }
 
-$aiWorkbenchSource = Join-Path $scriptDir "agents\ai-workbench"
+$aiWorkbenchSource = Join-Path $sourceDir "agents\ai-workbench"
 if (Test-Path $aiWorkbenchSource) {
     if (-not $WhatIf) {
         Copy-Item "$aiWorkbenchSource\copilot-instructions.md" "C:\AIWorkbench\.github\copilot-instructions.md" -Force
@@ -751,7 +756,7 @@ Write-Host "  Agent files personalized for $firstName" -ForegroundColor Green
 # ─────────────────────────────────────────────────────────────
 Step "Setting up WorkIQ (Microsoft 365 integration)"
 
-$workiqScript = Join-Path $scriptDir "install-workiq.ps1"
+$workiqScript = Join-Path $sourceDir "install-workiq.ps1"
 if (Test-Path $workiqScript) {
     $wiqSuccess = $false
     try { & $workiqScript -WhatIf:$WhatIf; $wiqSuccess = ($LASTEXITCODE -eq 0) } catch {}
@@ -768,7 +773,7 @@ Step "Creating desktop shortcut"
 
 $launcherSource = "C:\GitHub\pc-setup\start.ps1"
 if (-not (Test-Path $launcherSource)) {
-    $launcherSource = Join-Path $scriptDir "start.ps1"
+    $launcherSource = Join-Path $sourceDir "start.ps1"
 }
 $shortcutDir = [Environment]::GetFolderPath('Desktop')
 $consolePath = Join-Path $shortcutDir "AI Agents.lnk"
