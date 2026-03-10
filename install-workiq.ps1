@@ -73,13 +73,11 @@ Read-Host "  Press Enter to open the Microsoft 365 login..."
 
 Write-Host "  Connecting to Microsoft 365 via WorkIQ..." -ForegroundColor Gray
 $authResult = workiq ask -q "What are my meetings today?" 2>&1
-Write-Host $authResult
 
 $authStr = $authResult -join " "
 if ($authStr -match "EULA|eula") {
     workiq accept-eula 2>&1 | Out-Null
     $authResult = workiq ask -q "What are my meetings today?" 2>&1
-    Write-Host $authResult
     $authStr = $authResult -join " "
 }
 
