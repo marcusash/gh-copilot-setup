@@ -23,11 +23,20 @@ if (-not (Get-Command agency -ErrorAction SilentlyContinue)) {
 
 Write-Host "  Launching AI Maker and AI Workbench..." -ForegroundColor Cyan
 
-# Build wt command: two tabs with locked tab colors
-# Tab 1: AI Maker (yellow #FFCB05) - launches immediately
-# Tab 2: AI Workbench (red #CE1126) - waits 10s so tab 1 npm install finishes first
+# Warm up agency node dependencies before opening tabs.
+# Both workspaces share ~/.agency/nodejs/ — parallel launches race on npm install.
+# Run once here, synchronously, so both tabs open clean with no init conflict.
+Write-Host "  Warming up agency dependencies..." -NoNewline -ForegroundColor Cyan
+$warmup = & agency copilot --version 2>&1 | Out-String
+if ($warmup -match "error|fail" -and $warmup -notmatch "version") {
+    Write-Host " WARNING: warmup had issues, tabs may need retry" -ForegroundColor Yellow
+} else {
+    Write-Host " ready" -ForegroundColor Green
+}
+
+# Both tabs launch simultaneously - npm install already done above.
 $aiMakerCmd     = "pwsh -NoProfile -WorkingDirectory C:\AIMaker -Command `"agency copilot`""
-$aiWorkbenchCmd = "cmd /c `"timeout /t 10 /nobreak >nul && pwsh -NoProfile -WorkingDirectory C:\AIWorkbench -Command agency copilot`""
+$aiWorkbenchCmd = "pwsh -NoProfile -WorkingDirectory C:\AIWorkbench -Command `"agency copilot`""
 
 $wtArgs = "new-tab --title `"AI Maker`" --tabColor `"#FFCB05`" --startingDirectory `"C:\AIMaker`" -- $aiMakerCmd ; new-tab --title `"AI Workbench`" --tabColor `"#CE1126`" --startingDirectory `"C:\AIWorkbench`" -- $aiWorkbenchCmd"
 
