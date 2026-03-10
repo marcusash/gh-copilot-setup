@@ -125,7 +125,9 @@ if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
     $ProgressPreference = 'SilentlyContinue'
     try {
         Write-Host "  Installing VC++ runtime dependency..." -ForegroundColor Gray
-        Add-AppxPackage -Uri "https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx" -ErrorAction Stop
+        $vcLibs = "$env:TEMP\vclibs.appx"
+        Invoke-WebRequest "https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx" -OutFile $vcLibs -UseBasicParsing
+        Add-AppxPackage $vcLibs -ErrorAction Stop
 
         Write-Host "  Installing UI Xaml dependency..." -ForegroundColor Gray
         $xaml = "$env:TEMP\ui-xaml.appx"
