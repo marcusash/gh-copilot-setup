@@ -406,6 +406,8 @@ if ($psrlVersion -lt [version]"2.1.0") {
     Write-Host "  PSReadLine $psrlVersion is too old, updating..." -ForegroundColor Yellow
     try {
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        # Ensure NuGet provider is present silently - fresh machines prompt without this
+        Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -Scope CurrentUser -ErrorAction SilentlyContinue | Out-Null
         Install-Module PSReadLine -Force -SkipPublisherCheck -Scope CurrentUser
         $newVer = (Get-Module PSReadLine -ListAvailable | Sort-Object Version -Descending | Select-Object -First 1).Version
         Write-Host "  Updated to $newVer" -ForegroundColor Green
