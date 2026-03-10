@@ -24,10 +24,10 @@ if (-not (Get-Command agency -ErrorAction SilentlyContinue)) {
 Write-Host "  Launching AI Maker and AI Workbench..." -ForegroundColor Cyan
 
 # Build wt command: two tabs with locked tab colors
-# Tab 1: AI Maker (yellow #FFCB05)
-# Tab 2: AI Workbench (red #CE1126)
-$aiMakerCmd    = "pwsh -NoProfile -WorkingDirectory C:\AIMaker -Command `"agency copilot`""
-$aiWorkbenchCmd = "pwsh -NoProfile -WorkingDirectory C:\AIWorkbench -Command `"agency copilot`""
+# Tab 1: AI Maker (yellow #FFCB05) - launches immediately
+# Tab 2: AI Workbench (red #CE1126) - waits 10s so tab 1 npm install finishes first
+$aiMakerCmd     = "pwsh -NoProfile -WorkingDirectory C:\AIMaker -Command `"agency copilot`""
+$aiWorkbenchCmd = "cmd /c `"timeout /t 10 /nobreak >nul && pwsh -NoProfile -WorkingDirectory C:\AIWorkbench -Command agency copilot`""
 
 $wtArgs = "new-tab --title `"AI Maker`" --tabColor `"#FFCB05`" --startingDirectory `"C:\AIMaker`" -- $aiMakerCmd ; new-tab --title `"AI Workbench`" --tabColor `"#CE1126`" --startingDirectory `"C:\AIWorkbench`" -- $aiWorkbenchCmd"
 
